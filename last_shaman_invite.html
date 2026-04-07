@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>마지막 무당 — 시사 초대장</title>
+<meta property="og:title" content="마지막 무당 — 시사 초대장">
+<meta property="og:description" content="당신이 선택한 것이 아닙니다. 당신의 사주가, 당신을 이 밤으로 이끌었습니다.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #faf9f7;
+    --bg2: #f2f0ec;
+    --text: #1a1a1a;
+    --text2: #555;
+    --text3: #999;
+    --border: rgba(0,0,0,0.15);
+    --border2: rgba(0,0,0,0.08);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111;
+      --bg2: #1a1a1a;
+      --text: #f0ede8;
+      --text2: #aaa;
+      --text3: #555;
+      --border: rgba(255,255,255,0.15);
+      --border2: rgba(255,255,255,0.07);
+    }
+  }
+
+  html, body {
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Serif KR', Georgia, serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #container {
+    width: 100%;
+    max-width: 480px;
+    padding: 3rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* ── INTRO ── */
+  #intro { text-align: center; max-width: 380px; }
+
+  .title-ko {
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 0.25em;
+    margin-bottom: 6px;
+  }
+  .title-en {
+    font-size: 11px;
+    letter-spacing: 0.45em;
+    color: var(--text3);
+    margin-bottom: 2.8rem;
+  }
+  .thin-line {
+    width: 32px;
+    height: 0.5px;
+    background: var(--border);
+    margin: 0 auto 2.5rem;
+  }
+  .intro-text {
+    font-size: 15px;
+    color: var(--text2);
+    line-height: 2.4;
+    margin-bottom: 3rem;
+    word-break: keep-all;
+  }
+
+  #summon-btn {
+    background: var(--text);
+    color: var(--bg);
+    border: none;
+    padding: 15px 50px;
+    font-size: 12px;
+    letter-spacing: 0.35em;
+    cursor: pointer;
+    font-family: inherit;
+    transition: opacity 0.2s;
+  }
+  #summon-btn:hover { opacity: 0.7; }
+
+  /* ── CARD ── */
+  #card-view {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .card-wrap {
+    width: 100%;
+    border: 0.5px solid var(--border);
+    background: var(--bg);
+    padding: 2.8rem 2.2rem;
+    position: relative;
+  }
+
+  .corner { position: absolute; width: 9px; height: 9px; }
+  .corner.tl { top: 12px; left: 12px; border-top: 0.5px solid var(--text2); border-left: 0.5px solid var(--text2); }
+  .corner.tr { top: 12px; right: 12px; border-top: 0.5px solid var(--text2); border-right: 0.5px solid var(--text2); }
+  .corner.bl { bottom: 12px; left: 12px; border-bottom: 0.5px solid var(--text2); border-left: 0.5px solid var(--text2); }
+  .corner.br { bottom: 12px; right: 12px; border-bottom: 0.5px solid var(--text2); border-right: 0.5px solid var(--text2); }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2.2rem;
+  }
+  .header-label { font-size: 10px; letter-spacing: 0.35em; color: var(--text3); }
+  .invite-code { font-size: 11px; letter-spacing: 0.1em; color: var(--text2); font-family: monospace; }
+
+  .card-main-title {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    color: var(--text);
+    text-align: center;
+    margin-bottom: 5px;
+  }
+  .card-main-en {
+    font-size: 10px;
+    letter-spacing: 0.45em;
+    color: var(--text3);
+    text-align: center;
+    margin-bottom: 2.2rem;
+  }
+
+  .saju-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    border: 0.5px solid var(--border2);
+    margin-bottom: 2rem;
+  }
+  .saju-cell {
+    padding: 14px 6px;
+    text-align: center;
+    border-right: 0.5px solid var(--border2);
+  }
+  .saju-cell:last-child { border-right: none; }
+  .pillar-label { font-size: 9px; letter-spacing: 0.2em; color: var(--text3); margin-bottom: 10px; }
+  .saju-chars { display: flex; flex-direction: column; align-items: center; gap: 2px; margin-bottom: 8px; }
+  .sc-top { font-size: 19px; font-weight: 600; color: var(--text); line-height: 1; }
+  .sc-bot { font-size: 19px; font-weight: 300; color: var(--text2); line-height: 1; }
+  .saju-el { font-size: 9px; color: var(--text3); letter-spacing: 0.1em; }
+
+  .hr { height: 0.5px; background: var(--border2); margin-bottom: 1.8rem; }
+
+  .fate-block { text-align: center; margin-bottom: 2.2rem; padding: 0 0.5rem; }
+  .fate-ko {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 2.4;
+    word-break: keep-all;
+    margin-bottom: 12px;
+    font-style: italic;
+    white-space: pre-line;
+  }
+  .fate-en {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--text3);
+    line-height: 2;
+    font-style: italic;
+    white-space: pre-line;
+  }
+
+  .card-footer { display: flex; justify-content: space-between; align-items: flex-end; }
+  .info-row { font-size: 11px; color: var(--text2); line-height: 2.2; letter-spacing: 0.05em; }
+  .info-lbl { color: var(--text3); margin-right: 8px; font-size: 10px; letter-spacing: 0.2em; }
+  .wu-mark { font-size: 34px; color: var(--text3); line-height: 1; opacity: 0.4; }
+
+  /* ── ACTIONS ── */
+  .actions { display: flex; gap: 10px; margin-top: 1.2rem; width: 100%; }
+
+  .btn {
+    flex: 1;
+    padding: 12px 8px;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    cursor: pointer;
+    font-family: inherit;
+    border: 0.5px solid var(--border);
+    background: transparent;
+    color: var(--text2);
+    transition: all 0.15s;
+  }
+  .btn:hover { background: var(--bg2); color: var(--text); }
+  .btn.dark { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .btn.dark:hover { opacity: 0.75; }
+  .btn.kakao { background: #FEE500; color: #191919; border-color: #FEE500; font-weight: 600; }
+  .btn.kakao:hover { opacity: 0.85; }
+
+  .notice {
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: 0.12em;
+    margin-top: 12px;
+    text-align: center;
+    line-height: 2;
+  }
+
+  .toast {
+    font-size: 11px; color: var(--text3); letter-spacing: 0.15em;
+    margin-top: 8px; opacity: 0; transition: opacity 0.3s; text-align: center;
+  }
+  .toast.show { opacity: 1; }
+
+  @media (max-width: 480px) {
+    .title-ko { font-size: 26px; }
+    .card-main-title { font-size: 22px; }
+    .sc-top, .sc-bot { font-size: 17px; }
+    .fate-ko { font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+<div id="container">
+
+  <div id="intro">
+    <div class="title-ko">마지막 무당</div>
+    <div class="title-en">THE LAST SHAMAN</div>
+    <div class="thin-line"></div>
+    <div class="intro-text">
+      당신이 이 자리를 선택한 것이 아닙니다.<br>
+      당신의 사주가, 당신을 이 밤으로 이끌었습니다.<br><br>
+      지금 뽑으십시오.<br>
+      당신만의 초대장이 기다리고 있습니다.
+    </div>
+    <button id="summon-btn" onclick="summon()">사주 뽑기</button>
+  </div>
+
+  <div id="card-view">
+    <div class="card-wrap" id="the-card">
+      <div class="corner tl"></div>
+      <div class="corner tr"></div>
+      <div class="corner bl"></div>
+      <div class="corner br"></div>
+
+      <div class="card-header">
+        <div class="header-label">시사 초대장</div>
+        <div class="invite-code" id="invite-code">—</div>
+      </div>
+
+      <div class="card-main-title">마지막 무당</div>
+      <div class="card-main-en">THE LAST SHAMAN</div>
+
+      <div class="saju-grid">
+        <div class="saju-cell">
+          <div class="pillar-label">시주</div>
+          <div class="saju-chars"><div class="sc-top" id="p1t">—</div><div class="sc-bot" id="p1b">—</div></div>
+          <div class="saju-el" id="p1e">—</div>
+        </div>
+        <div class="saju-cell">
+          <div class="pillar-label">일주</div>
+          <div class="saju-chars"><div class="sc-top" id="p2t">—</div><div class="sc-bot" id="p2b">—</div></div>
+          <div class="saju-el" id="p2e">—</div>
+        </div>
+        <div class="saju-cell">
+          <div class="pillar-label">월주</div>
+          <div class="saju-chars"><div class="sc-top" id="p3t">—</div><div class="sc-bot" id="p3b">—</div></div>
+          <div class="saju-el" id="p3e">—</div>
+        </div>
+        <div class="saju-cell">
+          <div class="pillar-label">년주</div>
+          <div class="saju-chars"><div class="sc-top" id="p4t">—</div><div class="sc-bot" id="p4b">—</div></div>
+          <div class="saju-el" id="p4e">—</div>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="fate-block">
+        <div class="fate-ko" id="fate-ko">—</div>
+        <div class="fate-en" id="fate-en">—</div>
+      </div>
+
+      <div class="card-footer">
+        <div>
+          <div class="info-row"><span class="info-lbl">일시</span>2026.04.10 &nbsp;12:30 – 13:00</div>
+          <div class="info-row"><span class="info-lbl">장소</span>희경빌딩 B-C동 강의장 A</div>
+          <div class="info-row"><span class="info-lbl">감독</span>조정웅</div>
+        </div>
+        <div class="wu-mark">巫</div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn" onclick="summon()">다시 뽑기</button>
+      <button class="btn dark" onclick="copyCard()">초대장 복사</button>
+      <button class="btn kakao" onclick="shareKakao()">카톡 공유</button>
+    </div>
+    <div class="toast" id="toast">초대장이 복사되었습니다</div>
+    <div class="notice">
+      이 초대장은 1인 1매입니다.<br>
+      입장 시 초대 코드를 제시하십시오.
+    </div>
+  </div>
+
+</div>
+
+<script>
+const CG=[
+  {c:'甲',el:'목'},{c:'乙',el:'목'},{c:'丙',el:'화'},{c:'丁',el:'화'},
+  {c:'戊',el:'토'},{c:'己',el:'토'},{c:'庚',el:'금'},{c:'辛',el:'금'},
+  {c:'壬',el:'수'},{c:'癸',el:'수'}
+];
+const JJ=[
+  {c:'子',el:'수'},{c:'丑',el:'토'},{c:'寅',el:'목'},{c:'卯',el:'목'},
+  {c:'辰',el:'토'},{c:'巳',el:'화'},{c:'午',el:'화'},{c:'未',el:'토'},
+  {c:'申',el:'금'},{c:'酉',el:'금'},{c:'戌',el:'토'},{c:'亥',el:'수'}
+];
+const FATES=[
+  {ko:'귀신은 이미 당신의 이름을 알고 있었습니다.\n이 밤, 드디어 당신에게 말을 겁니다.',en:'The spirits already knew your name.\nTonight, they finally speak.'},
+  {ko:'살아있는 자가 이 자리에 오는 것이 아닙니다.\n불린 자만이 올 수 있습니다.',en:'The living do not come here.\nOnly the summoned may enter.'},
+  {ko:'당신의 사주에는 이 밤이 기록되어 있었습니다.\n태어나던 순간부터.',en:'This night was written in your fate\nfrom the moment you were born.'},
+  {ko:'무당이 쓰러지는 자리에\n당신이 있어야 합니다.\n이유는 나중에 알게 됩니다.',en:'You must be there when the shaman falls.\nYou will understand why, later.'},
+  {ko:'이승과 저승의 경계는\n당신이 생각하는 것보다 얇습니다.',en:'The border between this world and the next\nis thinner than you think.'},
+  {ko:'혼이 몸을 떠나기 전,\n마지막으로 당신을 찾아옵니다.',en:'Before the spirit leaves the body,\nit comes to find you one last time.'},
+  {ko:'거부할 수 없었습니다.\n이미 당신은 이 자리에 오기로\n정해져 있었으니.',en:'You could not refuse.\nYou were always destined to be here.'},
+  {ko:'저승의 문이 열리는 밤,\n당신은 그 소리를 듣게 될 것입니다.',en:'On the night the gate of death opens,\nyou will hear it.'},
+  {ko:'당신이 보게 될 것들은\n기억에서 지워지지 않습니다.',en:'What you are about to witness\ncannot be unseen.'},
+  {ko:'무당은 혼자 쓰러질 수 없습니다.\n증인이 필요합니다.\n당신이 그 증인입니다.',en:'A shaman cannot fall alone.\nA witness is needed.\nYou are that witness.'},
+  {ko:'죽음이 두렵습니까.\n이 밤이 지나면,\n더 이상 두렵지 않을 것입니다.',en:'Are you afraid of death?\nAfter this night, you will no longer be.'},
+  {ko:'그것이 의식인지 현실인지,\n끝나고 나서야 알 수 있습니다.',en:'Whether it is ritual or reality —\nyou will only know when it is over.'},
+];
+
+const L='ABCDEFGHJKLMNPQRSTUVWXYZ';
+function pick(a){return a[Math.floor(Math.random()*a.length)];}
+function genCode(){
+  const r=()=>L[Math.floor(Math.random()*L.length)];
+  const n=()=>Math.floor(Math.random()*9)+1;
+  return `TLS-${r()}${r()}${n()}${n()}-${r()}${n()}`;
+}
+
+function summon(){
+  const pillars=[0,1,2,3].map(()=>{
+    const cg=pick(CG),jj=pick(JJ);
+    return{top:cg.c,bot:jj.c,el:cg.el+' · '+jj.el};
+  });
+  [1,2,3,4].forEach((i,idx)=>{
+    document.getElementById('p'+i+'t').textContent=pillars[idx].top;
+    document.getElementById('p'+i+'b').textContent=pillars[idx].bot;
+    document.getElementById('p'+i+'e').textContent=pillars[idx].el;
+  });
+  const f=pick(FATES);
+  document.getElementById('fate-ko').textContent=f.ko;
+  document.getElementById('fate-en').textContent=f.en;
+  document.getElementById('invite-code').textContent=genCode();
+  document.getElementById('intro').style.display='none';
+  document.getElementById('card-view').style.display='flex';
+  document.getElementById('toast').classList.remove('show');
+}
+
+function copyCard(){
+  const code=document.getElementById('invite-code').textContent;
+  const fko=document.getElementById('fate-ko').textContent;
+  const p=i=>document.getElementById('p'+i+'t').textContent+document.getElementById('p'+i+'b').textContent;
+  const txt=`────────────────────
+마지막 무당  THE LAST SHAMAN
+시사 초대장
+────────────────────
+
+사주  ${p(4)} ${p(3)} ${p(2)} ${p(1)}
+
+${fko}
+
+일시  2026.04.10  12:30 – 13:00
+장소  희경빌딩 B-C동 강의장 A
+감독  조정웅
+
+초대 코드  ${code}
+────────────────────
+巫  이 초대장은 1인 1매입니다.`;
+  navigator.clipboard.writeText(txt).then(()=>{
+    const t=document.getElementById('toast');
+    t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),2800);
+  });
+}
+
+function shareKakao(){
+  const code=document.getElementById('invite-code').textContent;
+  const fko=document.getElementById('fate-ko').textContent.replace(/\n/g,' ');
+  const pageUrl=encodeURIComponent(window.location.href);
+  const text=encodeURIComponent(`[마지막 무당 — 시사 초대장]\n\n${fko}\n\n초대 코드: ${code}\n일시: 2026.04.10  12:30–13:00\n장소: 희경빌딩 B-C동 강의장 A\n\n초대장 받기 →`);
+  window.open(`https://sharer.kakao.com/talk/friends/picker/link?app_key=KAKAO_APP_KEY&link_ver=4.0&template_id=&url=${pageUrl}&text=${text}`,'_blank','width=350,height=550');
+}
+</script>
+</body>
+</html>
