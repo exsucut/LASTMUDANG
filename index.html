@@ -9,117 +9,33 @@
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&display=swap" rel="stylesheet">
+<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
-    --bg: #0d0c0a;
-    --bg2: #1a1814;
-    --text: #f0ede8;
-    --text2: #aaa49a;
-    --text3: #5a5650;
-    --border: rgba(240,237,232,0.15);
-    --border2: rgba(240,237,232,0.07);
+    --bg: #0d0c0a; --bg2: #1a1814; --text: #f0ede8;
+    --text2: #aaa49a; --text3: #5a5650;
+    --border: rgba(240,237,232,0.15); --border2: rgba(240,237,232,0.07);
   }
+  html, body { min-height: 100vh; background: var(--bg); color: var(--text); font-family: 'Noto Serif KR', Georgia, serif; }
 
-  html, body {
-    min-height: 100vh;
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Noto Serif KR', Georgia, serif;
-  }
+  .poster-hero { width: 100%; max-height: 420px; overflow: hidden; position: relative; }
+  .poster-hero img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+  .poster-fade { position: absolute; bottom: 0; left: 0; right: 0; height: 140px; background: linear-gradient(to bottom, transparent, #0d0c0a); }
 
-  /* ── POSTER HERO ── */
-  .poster-hero {
-    width: 100%;
-    max-height: 420px;
-    overflow: hidden;
-    position: relative;
-  }
-  .poster-hero img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center top;
-    display: block;
-  }
-  .poster-fade {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 120px;
-    background: linear-gradient(to bottom, transparent, #0d0c0a);
-  }
+  #container { width: 100%; max-width: 480px; margin: 0 auto; padding: 0 1.5rem 3rem; display: flex; flex-direction: column; align-items: center; }
 
-  /* ── LAYOUT ── */
-  #container {
-    width: 100%;
-    max-width: 480px;
-    margin: 0 auto;
-    padding: 0 1.5rem 3rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  /* ── INTRO ── */
   #intro { text-align: center; max-width: 380px; padding-top: 2rem; width: 100%; }
-
-  .title-ko {
-    font-size: 30px;
-    font-weight: 600;
-    color: var(--text);
-    letter-spacing: 0.25em;
-    margin-bottom: 6px;
-  }
-  .title-en {
-    font-size: 11px;
-    letter-spacing: 0.45em;
-    color: var(--text3);
-    margin-bottom: 2.5rem;
-  }
-  .thin-line {
-    width: 32px; height: 0.5px;
-    background: var(--border);
-    margin: 0 auto 2.5rem;
-  }
-  .intro-text {
-    font-size: 15px;
-    color: var(--text2);
-    line-height: 2.4;
-    margin-bottom: 3rem;
-    word-break: keep-all;
-  }
-
-  #summon-btn {
-    background: var(--text);
-    color: var(--bg);
-    border: none;
-    padding: 15px 50px;
-    font-size: 12px;
-    letter-spacing: 0.35em;
-    cursor: pointer;
-    font-family: inherit;
-    transition: opacity 0.2s;
-  }
+  .title-ko { font-size: 30px; font-weight: 600; color: var(--text); letter-spacing: 0.25em; margin-bottom: 6px; }
+  .title-en { font-size: 11px; letter-spacing: 0.45em; color: var(--text3); margin-bottom: 2.5rem; }
+  .thin-line { width: 32px; height: 0.5px; background: var(--border); margin: 0 auto 2.5rem; }
+  .intro-text { font-size: 15px; color: var(--text2); line-height: 2.4; margin-bottom: 3rem; word-break: keep-all; }
+  #summon-btn { background: var(--text); color: var(--bg); border: none; padding: 15px 50px; font-size: 12px; letter-spacing: 0.35em; cursor: pointer; font-family: inherit; transition: opacity 0.2s; }
   #summon-btn:hover { opacity: 0.75; }
 
-  /* ── CARD ── */
-  #card-view {
-    display: none;
-    width: 100%;
-    flex-direction: column;
-    align-items: center;
-    padding-top: 2rem;
-  }
-
-  .card-wrap {
-    width: 100%;
-    border: 0.5px solid var(--border);
-    background: var(--bg2);
-    padding: 2.8rem 2.2rem;
-    position: relative;
-  }
-
+  #card-view { display: none; width: 100%; flex-direction: column; align-items: center; padding-top: 2rem; }
+  .card-wrap { width: 100%; border: 0.5px solid var(--border); background: var(--bg2); padding: 2.8rem 2.2rem; position: relative; }
   .corner { position: absolute; width: 9px; height: 9px; }
   .corner.tl { top: 12px; left: 12px; border-top: 0.5px solid var(--text2); border-left: 0.5px solid var(--text2); }
   .corner.tr { top: 12px; right: 12px; border-top: 0.5px solid var(--text2); border-right: 0.5px solid var(--text2); }
@@ -129,7 +45,6 @@
   .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2.2rem; }
   .header-label { font-size: 10px; letter-spacing: 0.35em; color: var(--text3); }
   .invite-code { font-size: 11px; letter-spacing: 0.1em; color: var(--text2); font-family: monospace; }
-
   .card-main-title { font-size: 24px; font-weight: 600; letter-spacing: 0.2em; color: var(--text); text-align: center; margin-bottom: 5px; }
   .card-main-en { font-size: 10px; letter-spacing: 0.45em; color: var(--text3); text-align: center; margin-bottom: 2.2rem; }
 
@@ -143,7 +58,6 @@
   .saju-el { font-size: 9px; color: var(--text3); letter-spacing: 0.1em; }
 
   .hr { height: 0.5px; background: var(--border2); margin-bottom: 1.8rem; }
-
   .fate-block { text-align: center; margin-bottom: 2.2rem; padding: 0 0.5rem; }
   .fate-ko { font-size: 14px; color: var(--text); line-height: 2.4; word-break: keep-all; margin-bottom: 12px; font-style: italic; white-space: pre-line; }
   .fate-en { font-size: 10px; letter-spacing: 0.12em; color: var(--text3); line-height: 2; font-style: italic; white-space: pre-line; }
@@ -154,15 +68,11 @@
   .wu-mark { font-size: 34px; color: var(--text3); line-height: 1; opacity: 0.4; }
 
   .actions { display: flex; gap: 10px; margin-top: 1.2rem; width: 100%; }
-  .btn {
-    flex: 1; padding: 12px 8px; font-size: 11px; letter-spacing: 0.18em;
-    cursor: pointer; font-family: inherit; border: 0.5px solid var(--border);
-    background: transparent; color: var(--text2); transition: all 0.15s;
-  }
+  .btn { flex: 1; padding: 12px 8px; font-size: 11px; letter-spacing: 0.18em; cursor: pointer; font-family: inherit; border: 0.5px solid var(--border); background: transparent; color: var(--text2); transition: all 0.15s; }
   .btn:hover { background: var(--bg); color: var(--text); }
   .btn.dark { background: var(--text); color: var(--bg); border-color: var(--text); }
   .btn.dark:hover { opacity: 0.75; }
-  .btn.kakao { background: #FEE500; color: #191919; border-color: #FEE500; font-weight: 600; }
+  .btn.kakao { background: #FEE500; color: #191919; border-color: #FEE500; font-weight: 600; letter-spacing: 0.1em; }
   .btn.kakao:hover { opacity: 0.85; }
 
   .notice { font-size: 10px; color: var(--text3); letter-spacing: 0.12em; margin-top: 12px; text-align: center; line-height: 2; }
@@ -170,7 +80,7 @@
   .toast.show { opacity: 1; }
 
   @media (max-width: 480px) {
-    .poster-hero { max-height: 280px; }
+    .poster-hero { max-height: 260px; }
     .title-ko { font-size: 24px; }
     .sc-top, .sc-bot { font-size: 17px; }
     .fate-ko { font-size: 13px; }
@@ -202,15 +112,12 @@
     <div class="card-wrap">
       <div class="corner tl"></div><div class="corner tr"></div>
       <div class="corner bl"></div><div class="corner br"></div>
-
       <div class="card-header">
         <div class="header-label">시사 초대장</div>
         <div class="invite-code" id="invite-code">—</div>
       </div>
-
       <div class="card-main-title">마지막 무당</div>
       <div class="card-main-en">THE LAST SHAMAN</div>
-
       <div class="saju-grid">
         <div class="saju-cell">
           <div class="pillar-label">시주</div>
@@ -233,14 +140,11 @@
           <div class="saju-el" id="p4e">—</div>
         </div>
       </div>
-
       <div class="hr"></div>
-
       <div class="fate-block">
         <div class="fate-ko" id="fate-ko">—</div>
         <div class="fate-en" id="fate-en">—</div>
       </div>
-
       <div class="card-footer">
         <div>
           <div class="info-row"><span class="info-lbl">일시</span>2026.04.10 &nbsp;12:30 – 13:00</div>
@@ -250,7 +154,6 @@
         <div class="wu-mark">巫</div>
       </div>
     </div>
-
     <div class="actions">
       <button class="btn" onclick="summon()">다시 뽑기</button>
       <button class="btn dark" onclick="copyCard()">초대장 복사</button>
@@ -262,6 +165,8 @@
 </div>
 
 <script>
+Kakao.init('752e2946869a02bd33c2c59ef7169908');
+
 const CG=[
   {c:'甲',el:'목'},{c:'乙',el:'목'},{c:'丙',el:'화'},{c:'丁',el:'화'},
   {c:'戊',el:'토'},{c:'己',el:'토'},{c:'庚',el:'금'},{c:'辛',el:'금'},
@@ -285,6 +190,18 @@ const FATES=[
   {ko:'무당은 혼자 쓰러질 수 없습니다.\n증인이 필요합니다. 당신이 그 증인입니다.',en:'A shaman cannot fall alone.\nA witness is needed. You are that witness.'},
   {ko:'죽음이 두렵습니까.\n이 밤이 지나면, 더 이상 두렵지 않을 것입니다.',en:'Are you afraid of death?\nAfter this night, you will no longer be.'},
   {ko:'그것이 의식인지 현실인지,\n끝나고 나서야 알 수 있습니다.',en:'Whether it is ritual or reality —\nyou will only know when it is over.'},
+  {ko:'당신이 이 자리에 앉는 순간,\n이미 의식은 시작된 것입니다.',en:'The moment you take your seat,\nthe ritual has already begun.'},
+  {ko:'무당은 죽어가면서도\n당신의 눈을 찾습니다.',en:'Even as she dies,\nthe shaman searches for your eyes.'},
+  {ko:'이 세계에 남겨진 마지막 목소리가\n오늘 밤 들립니다.',en:'The last voice left in this world\nwill be heard tonight.'},
+  {ko:'당신의 기운이 이 의식에\n없어서는 안 됩니다.',en:'Your presence is essential\nto complete this ritual.'},
+  {ko:'부름을 받은 자는\n이미 절반은 저승에 닿아 있습니다.',en:'Those who are summoned\nhave already touched the other side.'},
+  {ko:'신이 떠난 자리에\n무엇이 남는지 당신은 보게 됩니다.',en:'You will see what remains\nwhen the spirit departs.'},
+  {ko:'당신이 눈을 감는 순간\n그것이 보이기 시작합니다.',en:'The moment you close your eyes,\nit begins to appear.'},
+  {ko:'살과 혼 사이,\n그 찰나의 틈에 당신이 초대되었습니다.',en:'Between flesh and spirit,\nyou have been invited into that fleeting gap.'},
+  {ko:'무당의 마지막 굿은\n관객 없이 완성되지 않습니다.',en:'The shaman\'s final rite\ncannot be completed without a witness.'},
+  {ko:'이 밤이 끝나도\n당신 안에서 무언가는 계속됩니다.',en:'Even after this night ends,\nsomething inside you continues.'},
+  {ko:'불꽃이 꺼지는 순간을\n당신의 눈으로 기억해야 합니다.',en:'You must remember with your own eyes\nthe moment the flame goes out.'},
+  {ko:'그녀가 마지막으로 부르는 이름이\n어쩌면 당신의 이름일지도 모릅니다.',en:'The last name she calls\nmay well be yours.'},
 ];
 
 const L='ABCDEFGHJKLMNPQRSTUVWXYZ';
@@ -294,6 +211,9 @@ function genCode(){
   const n=()=>Math.floor(Math.random()*9)+1;
   return 'TLS-'+r()+r()+n()+n()+'-'+r()+n();
 }
+
+let currentFate='';
+let currentCode='';
 
 function summon(){
   const pillars=[0,1,2,3].map(()=>{
@@ -306,32 +226,82 @@ function summon(){
     document.getElementById('p'+i+'e').textContent=pillars[idx].el;
   });
   const f=pick(FATES);
+  currentFate=f.ko;
   document.getElementById('fate-ko').textContent=f.ko;
   document.getElementById('fate-en').textContent=f.en;
-  document.getElementById('invite-code').textContent=genCode();
+  currentCode=genCode();
+  document.getElementById('invite-code').textContent=currentCode;
   document.getElementById('intro').style.display='none';
   document.getElementById('card-view').style.display='flex';
   document.getElementById('toast').classList.remove('show');
 }
 
 function copyCard(){
-  const code=document.getElementById('invite-code').textContent;
-  const fko=document.getElementById('fate-ko').textContent;
-  const p=i=>document.getElementById('p'+i+'t').textContent+document.getElementById('p'+i+'b').textContent;
-  const txt='────────────────────\n마지막 무당  THE LAST SHAMAN\n시사 초대장\n────────────────────\n\n사주  '+p(4)+' '+p(3)+' '+p(2)+' '+p(1)+'\n\n'+fko+'\n\n일시  2026.04.10  12:30 – 13:00\n장소  희경빌딩 B-C동 강의장 A\n감독  조정웅\n\n초대 코드  '+code+'\n────────────────────\n巫  이 초대장은 1인 1매입니다.';
-  navigator.clipboard.writeText(txt).then(()=>{
-    const t=document.getElementById('toast');
-    t.classList.add('show');
-    setTimeout(()=>t.classList.remove('show'),2800);
+  const card=document.querySelector('.card-wrap');
+  const btn=document.querySelector('.actions');
+  btn.style.display='none';
+  const toast=document.getElementById('toast');
+  toast.style.display='none';
+  const notice=document.querySelector('.notice');
+  notice.style.display='none';
+
+  html2canvas(card,{
+    backgroundColor:'#1a1814',
+    scale:2,
+    useCORS:true,
+    logging:false
+  }).then(canvas=>{
+    btn.style.display='flex';
+    toast.style.display='';
+    notice.style.display='';
+
+    canvas.toBlob(blob=>{
+      // Try clipboard API first (modern browsers)
+      if(navigator.clipboard && window.ClipboardItem){
+        navigator.clipboard.write([new ClipboardItem({'image/png':blob})]).then(()=>{
+          toast.textContent='이미지가 복사되었습니다';
+          toast.classList.add('show');
+          setTimeout(()=>toast.classList.remove('show'),2800);
+        }).catch(()=>{ downloadFallback(canvas); });
+      } else {
+        downloadFallback(canvas);
+      }
+    },'image/png');
   });
 }
 
+function downloadFallback(canvas){
+  const a=document.createElement('a');
+  a.download='마지막무당_초대장.png';
+  a.href=canvas.toDataURL('image/png');
+  a.click();
+  const toast=document.getElementById('toast');
+  toast.textContent='이미지가 저장되었습니다';
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'),2800);
+}
+
 function shareKakao(){
-  const code=document.getElementById('invite-code').textContent;
-  const fko=document.getElementById('fate-ko').textContent.replace(/\n/g,' ');
-  const pageUrl=encodeURIComponent(window.location.href);
-  const text=encodeURIComponent('[마지막 무당 — 시사 초대장]\n\n'+fko+'\n\n초대 코드: '+code+'\n일시: 2026.04.10  12:30–13:00\n장소: 희경빌딩 B-C동 강의장 A\n\n초대장 받기 →');
-  window.open('https://sharer.kakao.com/talk/friends/picker/link?app_key=KAKAO_APP_KEY&link_ver=4.0&url='+pageUrl+'&text='+text,'_blank','width=350,height=550');
+  const fateOneLine=currentFate.replace(/\n/g,' ');
+  Kakao.Share.sendDefault({
+    objectType:'feed',
+    content:{
+      title:'마지막 무당 — 시사 초대장',
+      description:fateOneLine+'\n\n초대 코드: '+currentCode,
+      imageUrl:'https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png',
+      link:{
+        mobileWebUrl:window.location.href,
+        webUrl:window.location.href
+      }
+    },
+    buttons:[{
+      title:'초대장 받기',
+      link:{
+        mobileWebUrl:window.location.href,
+        webUrl:window.location.href
+      }
+    }]
+  });
 }
 </script>
 </body>
