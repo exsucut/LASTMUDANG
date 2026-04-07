@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>마지막 무당 — 추첨</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #080706; --bg2: #111009; --bg3: #1a1814;
+  --text: #f0ede8; --text2: #8a8478; --text3: #3a3830;
+  --border: rgba(240,237,232,0.12); --border2: rgba(240,237,232,0.06);
+  --gold: #c8a96e; --gold2: #8a6a35; --gold3: #f5d898;
+  --silver: #a8b0b8; --bronze: #c4895a;
+}
+html, body { min-height: 100vh; background: var(--bg); color: var(--text); font-family: 'Noto Serif KR', Georgia, serif; overflow-x: hidden; }
+body::before {
+  content: ''; position: fixed; inset: 0; z-index: 0;
+  background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(180,140,80,0.06) 0%, transparent 70%), radial-gradient(ellipse 40% 60% at 80% 100%, rgba(100,60,20,0.08) 0%, transparent 60%);
+  pointer-events: none;
+}
+header {
+  position: relative; z-index: 1; text-align: center;
+  padding: 4rem 1rem 3rem; border-bottom: 0.5px solid var(--border2);
+}
+.h-eyebrow { font-size: 10px; letter-spacing: 0.6em; color: var(--text3); margin-bottom: 16px; }
+.h-title { font-size: 36px; font-weight: 700; letter-spacing: 0.15em; color: var(--text); margin-bottom: 6px; }
+.h-sub { font-size: 11px; letter-spacing: 0.4em; color: var(--text2); }
+#container { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+.stage-indicator { display: flex; align-items: center; justify-content: center; margin-bottom: 3rem; }
+.stage-pip { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 0 20px; }
+.pip-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text3); transition: all 0.5s; }
+.pip-label { font-size: 9px; letter-spacing: 0.2em; color: var(--text3); transition: color 0.5s; }
+.stage-pip.active .pip-dot { background: var(--gold); box-shadow: 0 0 8px rgba(200,169,110,0.6); }
+.stage-pip.active .pip-label { color: var(--gold); }
+.stage-pip.done .pip-dot { background: var(--text2); }
+.stage-pip.done .pip-label { color: var(--text2); }
+.pip-line { flex: 1; height: 0.5px; background: var(--border2); max-width: 60px; }
+.rank-crown { text-align: center; margin-bottom: 2rem; }
+.rank-number { font-size: 80px; font-weight: 700; line-height: 1; color: var(--text3); letter-spacing: -0.02em; transition: color 0.4s, text-shadow 0.4s; }
+.rank-number.bronze { color: var(--bronze); text-shadow: 0 0 40px rgba(196,137,90,0.3); }
+.rank-number.silver { color: var(--silver); text-shadow: 0 0 40px rgba(168,176,184,0.3); }
+.rank-number.gold { color: var(--gold3); text-shadow: 0 0 60px rgba(245,216,152,0.4); }
+.rank-label { font-size: 11px; letter-spacing: 0.35em; color: var(--text2); margin-top: 6px; }
+.slot-stage {
+  border: 0.5px solid var(--border); background: var(--bg2);
+  padding: 3rem 2rem; text-align: center; margin-bottom: 2rem;
+  min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;
+  position: relative; overflow: hidden;
+}
+.slot-stage::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(200,169,110,0.03) 0%, transparent 70%);
+  pointer-events: none;
+}
+.slot-idle { font-size: 13px; letter-spacing: 0.25em; color: var(--text3); }
+.slot-code { font-size: 38px; font-weight: 600; letter-spacing: 0.2em; font-family: 'Courier New', monospace; color: var(--text2); min-height: 50px; line-height: 1.2; }
+.slot-code.rolling { color: var(--text3); animation: flicker 0.08s infinite; }
+.slot-code.landed-bronze { color: var(--bronze); text-shadow: 0 0 30px rgba(196,137,90,0.5); }
+.slot-code.landed-silver { color: var(--silver); text-shadow: 0 0 30px rgba(168,176,184,0.5); }
+.slot-code.landed-gold { color: var(--gold3); text-shadow: 0 0 50px rgba(245,216,152,0.6); animation: goldPulse 1.5s ease-in-out infinite; }
+@keyframes flicker { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+@keyframes goldPulse { 0%, 100% { text-shadow: 0 0 40px rgba(245,216,152,0.5); } 50% { text-shadow: 0 0 80px rgba(245,216,152,0.9), 0 0 120px rgba(245,216,152,0.3); } }
+.slot-stage.rolling::after {
+  content: ''; position: absolute; inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+  pointer-events: none; animation: scanline 0.1s linear infinite;
+}
+@keyframes scanline { from { background-position: 0 0; } to { background-position: 0 4px; } }
+.progress-track { width: 100%; max-width: 280px; height: 1px; background: var(--border2); }
+.progress-fill { height: 100%; background: var(--gold2); transition: width 0.08s linear; width: 0%; }
+.tension-msg { font-size: 11px; letter-spacing: 0.25em; color: var(--text3); min-height: 16px; transition: all 0.3s; }
+.draw-btn {
+  width: 100%; padding: 18px; font-size: 13px; letter-spacing: 0.4em;
+  font-family: inherit; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; margin-bottom: 2.5rem;
+}
+.draw-btn.bronze-btn { background: var(--bronze); color: #1a0c04; }
+.draw-btn.silver-btn { background: var(--silver); color: #0c1014; }
+.draw-btn.gold-btn { background: var(--gold3); color: #1a1204; }
+.draw-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+.draw-btn:active { transform: translateY(0); }
+.draw-btn:disabled { opacity: 0.25; cursor: default; transform: none; }
+.results-section { margin-top: 1rem; }
+.results-label { font-size: 10px; letter-spacing: 0.35em; color: var(--text3); margin-bottom: 14px; }
+.result-item {
+  display: flex; align-items: center; gap: 16px;
+  padding: 14px 16px; border: 0.5px solid var(--border2); background: var(--bg2); margin-bottom: 8px;
+  opacity: 0; transform: translateY(8px); transition: opacity 0.4s, transform 0.4s;
+}
+.result-item.show { opacity: 1; transform: translateY(0); }
+.result-rank-badge { font-size: 11px; letter-spacing: 0.15em; min-width: 28px; }
+.result-rank-badge.b { color: var(--bronze); }
+.result-rank-badge.s { color: var(--silver); }
+.result-rank-badge.g { color: var(--gold3); }
+.result-code-val { font-family: 'Courier New', monospace; font-size: 15px; font-weight: 600; letter-spacing: 0.12em; color: var(--text); flex: 1; }
+.result-dot { width: 5px; height: 5px; border-radius: 50%; }
+.result-dot.b { background: var(--bronze); }
+.result-dot.s { background: var(--silver); }
+.result-dot.g { background: var(--gold3); box-shadow: 0 0 8px rgba(245,216,152,0.6); }
+.reset-btn {
+  width: 100%; padding: 13px; margin-top: 2rem; font-size: 11px; letter-spacing: 0.25em;
+  font-family: inherit; cursor: pointer; background: transparent; color: var(--text3);
+  border: 0.5px solid var(--border2); transition: all 0.2s;
+}
+.reset-btn:hover { border-color: var(--border); color: var(--text2); }
+.confetti-piece { position: fixed; top: -10px; border-radius: 2px; animation: confettiFall linear forwards; pointer-events: none; z-index: 999; }
+@keyframes confettiFall { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
+
+.redraw-btn {
+  width:100%; padding:10px; margin-top:-2px; margin-bottom:10px;
+  font-size:10px; letter-spacing:0.2em; font-family:inherit;
+  cursor:pointer; background:transparent; color:var(--text3);
+  border:0.5px solid var(--border2); border-top:none;
+  transition:all 0.2s;
+}
+.redraw-btn:hover { color:var(--text2); border-color:var(--border); background:rgba(240,237,232,0.03); }
+</style>
+</head>
+<body>
+<header>
+  <div class="h-eyebrow">Studio Freewillusion × CJ ENM</div>
+  <div class="h-title">마지막 무당</div>
+  <div class="h-sub">내부 시사 &nbsp;—&nbsp; 경품 추첨 &nbsp;—&nbsp; 2026.04.10</div>
+</header>
+<div id="container">
+  <div class="stage-indicator">
+    <div class="stage-pip" id="pip-3"><div class="pip-dot"></div><div class="pip-label">3등</div></div>
+    <div class="pip-line"></div>
+    <div class="stage-pip" id="pip-2"><div class="pip-dot"></div><div class="pip-label">2등</div></div>
+    <div class="pip-line"></div>
+    <div class="stage-pip" id="pip-1"><div class="pip-dot"></div><div class="pip-label">1등</div></div>
+  </div>
+  <div class="rank-crown">
+    <div class="rank-number" id="rank-number">—</div>
+    <div class="rank-label" id="rank-label">준비</div>
+  </div>
+  <div class="slot-stage" id="slot-stage">
+    <div class="slot-idle">추첨 버튼을 눌러 시작하세요</div>
+  </div>
+  <button class="draw-btn bronze-btn" id="draw-btn" onclick="startDraw()">3등 추첨 시작</button>
+  <div class="results-section" id="results-section"></div>
+</div>
+<script>
+var CODES=['TLS-AA13-Z6','TLS-AQ89-D9','TLS-AU71-F3','TLS-AX45-T4','TLS-BA18-X1','TLS-BB59-H2','TLS-CG62-V6','TLS-CH34-M8','TLS-CH52-F4','TLS-DM68-K3','TLS-DN48-L8','TLS-DQ14-E3','TLS-DV57-T7','TLS-DY32-E6','TLS-EA65-V4','TLS-EC23-J2','TLS-EE57-R3','TLS-EH71-U3','TLS-EK12-U8','TLS-EX19-V7','TLS-FN27-S1','TLS-FX25-K7','TLS-FX75-H3','TLS-GQ12-S3','TLS-GR61-P1','TLS-GY75-G9','TLS-HB52-D4','TLS-HC25-Y5','TLS-HL76-B8','TLS-HM58-D3','TLS-JD39-W1','TLS-JQ45-T5','TLS-KB44-Z8','TLS-KB82-P1','TLS-KC65-R7','TLS-KS91-F2','TLS-LA27-W8','TLS-LH19-U4','TLS-MC94-R8','TLS-MG64-C6','TLS-NA74-E1','TLS-NM46-H9','TLS-NQ88-Q1','TLS-NU89-J1','TLS-NV94-Y4','TLS-PB82-G1','TLS-PL54-Y6','TLS-PW35-Q9','TLS-QP12-Q1','TLS-QS77-C5','TLS-RD68-C1','TLS-RG12-Y4','TLS-RW43-F8','TLS-SC33-V7','TLS-SC35-Z2','TLS-SL57-N7','TLS-ST99-E4','TLS-SY68-F4','TLS-TF65-E5','TLS-TH67-C6','TLS-TQ26-U1','TLS-TW36-E6','TLS-TX95-E1','TLS-UL74-Q9','TLS-VC76-G3','TLS-VD12-E7','TLS-VF38-F5','TLS-VM76-V9','TLS-WD67-M3','TLS-WL26-A1','TLS-WN23-A6','TLS-XA33-Z9','TLS-XN92-X8','TLS-YH61-D3','TLS-YH97-M4','TLS-YQ63-G9','TLS-YU34-T6','TLS-ZD91-R7','TLS-ZD91-T3','TLS-ZR63-R4','TLS-ZZ23-T4'];
+var RANKS=[
+  {key:3,numCls:'bronze',codeCls:'landed-bronze',btnCls:'bronze-btn',btnText:'3등 추첨 시작',badgeCls:'b',tension:['','운명을 기다리는 중...','코드가 소환되고 있습니다...','잠시 후 공개됩니다...']},
+  {key:2,numCls:'silver',codeCls:'landed-silver',btnCls:'silver-btn',btnText:'2등 추첨 시작',badgeCls:'s',tension:['','누가 선택받을 것인가...','운명의 코드 탐색 중...','거의 다 왔습니다...']},
+  {key:1,numCls:'gold',  codeCls:'landed-gold',  btnCls:'gold-btn',  btnText:'최후의 추첨 — 1등',badgeCls:'g',tension:['','마지막 무당이 선택합니다...','운명의 코드가 결정됩니다...','이 순간을 기억하십시오...']}
+];
+var pool=CODES.slice(), currentRankIdx=0, rolling=false;
+
+function updatePips(){
+  [3,2,1].forEach(function(r,i){
+    var p=document.getElementById('pip-'+r);
+    p.className='stage-pip';
+    if(i<currentRankIdx) p.classList.add('done');
+    else if(i===currentRankIdx) p.classList.add('active');
+  });
+}
+function updateRankDisplay(){
+  var rank=RANKS[currentRankIdx];
+  var n=document.getElementById('rank-number');
+  n.textContent=rank.key+'등';
+  n.className='rank-number '+rank.numCls;
+  document.getElementById('rank-label').textContent=rank.key+'등 추첨';
+}
+function startDraw(){
+  if(rolling) return;
+  rolling=true;
+  var rank=RANKS[currentRankIdx];
+  document.getElementById('draw-btn').disabled=true;
+  updatePips(); updateRankDisplay();
+  var stage=document.getElementById('slot-stage');
+  stage.className='slot-stage rolling';
+  stage.innerHTML='<div class="slot-code rolling" id="slot">——————————</div><div class="progress-track"><div class="progress-fill" id="prog"></div></div><div class="tension-msg" id="tmsg"></div>';
+  var slot=document.getElementById('slot'), prog=document.getElementById('prog'), tmsg=document.getElementById('tmsg');
+  var ticks=0, maxTicks=55+Math.floor(Math.random()*25), tensionIdx=0;
+  var tensionTimer=setInterval(function(){ tensionIdx=(tensionIdx+1)%rank.tension.length; tmsg.textContent=rank.tension[tensionIdx]; },900);
+  var timer=setInterval(function(){
+    slot.textContent=pool[Math.floor(Math.random()*pool.length)];
+    ticks++;
+    prog.style.width=Math.round((ticks/maxTicks)*100)+'%';
+    if(ticks>maxTicks-8){ clearInterval(timer); slowReveal(slot,prog,tmsg,tensionTimer,rank); }
+  },60);
+}
+function slowReveal(slot,prog,tmsg,tensionTimer,rank){
+  var delays=[150,200,280,380,500,660,860]; var i=0;
+  function step(){
+    if(i<delays.length-1){
+      slot.textContent=pool[Math.floor(Math.random()*pool.length)];
+      prog.style.width=Math.round(80+(i/delays.length)*20)+'%';
+      i++; setTimeout(step,delays[i]);
+    } else {
+      clearInterval(tensionTimer);
+      var wi=Math.floor(Math.random()*pool.length);
+      var winner=pool.splice(wi,1)[0];
+      prog.style.width='100%';
+      tmsg.textContent=rank.key+'등 당첨';
+      tmsg.style.color=rank.key===1?'#f5d898':rank.key===2?'#a8b0b8':'#c4895a';
+      document.getElementById('slot-stage').className='slot-stage';
+      slot.className='slot-code '+rank.codeCls;
+      slot.textContent=winner;
+      rolling=false;
+      addResult(winner,rank);
+      if(rank.key===1) setTimeout(fireConfetti,400);
+      setTimeout(function(){
+        addRedrawBtn(winner, rank);
+        advanceRank();
+      },2200);
+    }
+  }
+  setTimeout(step,delays[0]);
+}
+function addResult(code,rank){
+  var section=document.getElementById('results-section');
+  if(!section.querySelector('.results-label')) section.innerHTML='<div class="results-label">당첨 코드</div>';
+  var existing=section.querySelector('[data-rank="'+rank.key+'"]');
+  if(existing) existing.remove();
+  var item=document.createElement('div');
+  item.className='result-item'; item.setAttribute('data-rank',rank.key);
+  item.innerHTML='<div class="result-dot '+rank.badgeCls+'"></div><div class="result-rank-badge '+rank.badgeCls+'">'+rank.key+'등</div><div class="result-code-val">'+code+'</div>';
+  var lbl=section.querySelector('.results-label');
+  section.insertBefore(item,lbl.nextSibling);
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ item.classList.add('show'); }); });
+}
+
+function addRedrawBtn(code, rank){
+  var existing=document.getElementById('redraw-'+rank.key);
+  if(existing) existing.remove();
+  var btn=document.createElement('button');
+  btn.id='redraw-'+rank.key;
+  btn.className='redraw-btn';
+  btn.setAttribute('data-rank', rank.key);
+  btn.innerHTML=rank.key+'등 다시 뽑기';
+  btn.onclick=(function(c,r){ return function(){
+    pool.push(c);
+    var item=document.getElementById('results-section').querySelector('[data-rank="'+r.key+'"]');
+    if(item) item.remove();
+    btn.remove();
+    currentRankIdx=RANKS.indexOf(r);
+    rolling=false;
+    var drawBtn=document.getElementById('draw-btn');
+    drawBtn.style.display='';
+    drawBtn.className='draw-btn '+r.btnCls;
+    drawBtn.textContent=r.btnText;
+    drawBtn.disabled=false;
+    updatePips(); updateRankDisplay();
+    document.getElementById('slot-stage').className='slot-stage';
+    document.getElementById('slot-stage').innerHTML='<div class="slot-idle">다시 뽑기 버튼을 눌러 재추첨하세요</div>';
+    var rb=document.querySelector('.reset-btn'); if(rb) rb.remove();
+  }; })(code, rank);
+  var section=document.getElementById('results-section');
+  var item=section.querySelector('[data-rank="'+rank.key+'"]');
+  if(item) item.insertAdjacentElement('afterend', btn);
+}
+
+function advanceRank(){
+  currentRankIdx++;
+  if(currentRankIdx<RANKS.length){
+    var nr=RANKS[currentRankIdx];
+    var btn=document.getElementById('draw-btn');
+    btn.style.display='';
+    btn.className='draw-btn '+nr.btnCls;
+    btn.textContent=nr.btnText;
+    btn.disabled=false;
+    updatePips(); updateRankDisplay();
+    document.getElementById('slot-stage').innerHTML='<div class="slot-idle">다음 추첨 버튼을 눌러 계속하세요</div>';
+  } else {
+    document.getElementById('draw-btn').style.display='none';
+    var rb=document.createElement('button');
+    rb.className='reset-btn'; rb.textContent='전체 다시 추첨하기'; rb.onclick=resetAll;
+    document.getElementById('container').appendChild(rb);
+    updatePips();
+    var n=document.getElementById('rank-number');
+    n.textContent='巫'; n.className='rank-number gold';
+    document.getElementById('rank-label').textContent='추첨 완료';
+  }
+}
+function fireConfetti(){
+  var colors=['#f5d898','#c8a96e','#f0ede8','#c4895a','#a8b0b8','#ffffff'];
+  for(var i=0;i<80;i++){
+    (function(i){ setTimeout(function(){
+      var el=document.createElement('div');
+      el.className='confetti-piece';
+      var size=4+Math.random()*8;
+      el.style.cssText='left:'+(Math.random()*100)+'vw;width:'+size+'px;height:'+(size*(0.4+Math.random()*0.6))+'px;background:'+colors[Math.floor(Math.random()*colors.length)]+';animation-duration:'+(2.5+Math.random()*2)+'s;';
+      document.body.appendChild(el);
+      setTimeout(function(){ el.remove(); },5000);
+    },i*30); })(i);
+  }
+}
+function resetAll(){
+  pool=CODES.slice(); currentRankIdx=0; rolling=false;
+  document.getElementById('results-section').innerHTML='';
+  var n=document.getElementById('rank-number'); n.textContent='—'; n.className='rank-number';
+  document.getElementById('rank-label').textContent='준비';
+  document.getElementById('slot-stage').className='slot-stage';
+  document.getElementById('slot-stage').innerHTML='<div class="slot-idle">추첨 버튼을 눌러 시작하세요</div>';
+  var btn=document.getElementById('draw-btn');
+  btn.style.display=''; btn.className='draw-btn bronze-btn'; btn.textContent='3등 추첨 시작'; btn.disabled=false;
+  var rb=document.querySelector('.reset-btn'); if(rb) rb.remove();
+  [3,2,1].forEach(function(r){ document.getElementById('pip-'+r).className='stage-pip'; });
+}
+updatePips();
+</script>
+</body>
+</html>
