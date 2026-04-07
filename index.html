@@ -9,7 +9,6 @@
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&display=swap" rel="stylesheet">
-<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -157,7 +156,6 @@
     <div class="actions">
       <button class="btn" onclick="summon()">다시 뽑기</button>
       <button class="btn dark" onclick="copyCard()">초대장 복사</button>
-      <button class="btn kakao" onclick="shareKakao()">카톡 공유</button>
     </div>
     <div class="toast" id="toast">초대장이 복사되었습니다</div>
     <div class="notice">이 초대장은 1인 1매입니다.<br>입장 시 초대 코드를 제시하십시오.</div>
@@ -165,7 +163,6 @@
 </div>
 
 <script>
-Kakao.init('752e2946869a02bd33c2c59ef7169908');
 
 const CG=[
   {c:'甲',el:'목'},{c:'乙',el:'목'},{c:'丙',el:'화'},{c:'丁',el:'화'},
@@ -281,20 +278,6 @@ function downloadFallback(canvas){
   setTimeout(()=>toast.classList.remove('show'),2800);
 }
 
-function shareKakao(){
-  const fateOneLine=currentFate.replace(/\n/g,' ');
-  const pageUrl=window.location.href;
-  try {
-    Kakao.Share.sendDefault({
-      objectType:'feed',
-      content:{
-        title:'마지막 무당 — 시사 초대장',
-        description:fateOneLine+'  초대 코드: '+currentCode,
-        imageUrl:'https://exsucut.github.io/LASTMUDANG/poster.png',
-        link:{
-          mobileWebUrl:pageUrl,
-          webUrl:pageUrl
-        }
       },
       buttons:[{
         title:'초대장 받기',
