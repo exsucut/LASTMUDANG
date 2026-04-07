@@ -283,25 +283,32 @@ function downloadFallback(canvas){
 
 function shareKakao(){
   const fateOneLine=currentFate.replace(/\n/g,' ');
-  Kakao.Share.sendDefault({
-    objectType:'feed',
-    content:{
-      title:'마지막 무당 — 시사 초대장',
-      description:fateOneLine+'\n\n초대 코드: '+currentCode,
-      imageUrl:'https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png',
-      link:{
-        mobileWebUrl:window.location.href,
-        webUrl:window.location.href
-      }
-    },
-    buttons:[{
-      title:'초대장 받기',
-      link:{
-        mobileWebUrl:window.location.href,
-        webUrl:window.location.href
-      }
-    }]
-  });
+  const pageUrl=window.location.href;
+  try {
+    Kakao.Share.sendDefault({
+      objectType:'feed',
+      content:{
+        title:'마지막 무당 — 시사 초대장',
+        description:fateOneLine+'  초대 코드: '+currentCode,
+        imageUrl:'https://exsucut.github.io/LASTMUDANG/poster.png',
+        link:{
+          mobileWebUrl:pageUrl,
+          webUrl:pageUrl
+        }
+      },
+      buttons:[{
+        title:'초대장 받기',
+        link:{
+          mobileWebUrl:pageUrl,
+          webUrl:pageUrl
+        }
+      }]
+    });
+  } catch(e) {
+    // fallback: 카카오톡 앱 URL scheme
+    const text=encodeURIComponent('[마지막 무당 시사 초대장]\n\n'+fateOneLine+'\n\n초대 코드: '+currentCode+'\n\n일시: 2026.04.10 12:30-13:00\n장소: 희경빌딩 B-C동 강의장 A\n\n초대장 받기: '+pageUrl);
+    window.open('kakaotalk://msg/send?text='+text);
+  }
 }
 </script>
 </body>
